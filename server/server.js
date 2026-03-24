@@ -7,7 +7,6 @@ app.use(express.static(path.join(__dirname, 'files')));
 
 // Configure a 'get' endpoint for data..
 app.get('/movies', function (req, res) {
-  // Part 1: Remove the next line and replace with your code
   const movies = [
     {
       "Title": "The Thing",
@@ -22,30 +21,30 @@ app.get('/movies', function (req, res) {
       "Metascore": 57,
       "imdbRating": 8.2
     },
+    {
+      "Title": "Star Wars: Episode IV - A New Hope",
+      "Released": "1977-05-25",
+      "Runtime": 121,
+      "Genres": ["Action, Adventure, Fantasy"],
+      "Directors": ["George Lucas"],
+      "Writers": ["George Lucas"],
+      "Actors": ["Mark Hamill, Harrison Ford, Carrie Fisher"],
+      "Plot": "Luke Skywalker joins forces with a Jedi Knight, a cocky pilot, a Wookiee and two droids to save the galaxy from the Empire's world-destroying battle station, while also attempting to rescue Princess Leia from the mysterious Darth ...",
+      "Poster": "https://m.media-amazon.com/images/M/MV5BOGUwMDk0Y2MtNjBlNi00NmRiLTk2MWYtMGMyMDlhYmI4ZDBjXkEyXkFqcGc@._V1_SX300.jpg",
+      "Metascore": 90,
+      "imdbRating": 8.6
+    },
     {"Title":"Guardians of the Galaxy Vol. 2",
-      "Released":"05 May 2017",
-      "Runtime":"136 min",
-      "Genre":"Action, Adventure, Comedy",
-      "Director":"James Gunn",
-      "Writer":"James Gunn, Dan Abnett, Andy Lanning",
-      "Actors":"Chris Pratt, Zoe Saldaña, Dave Bautista",
+      "Released":"2017-05-05",
+      "Runtime":136 ,
+      "Genres":["Action, Adventure, Comedy"],
+      "Directors":["James Gunn"],
+      "Writers":["James Gunn, Dan Abnett, Andy Lanning"],
+      "Actors":["Chris Pratt, Zoe Saldaña, Dave Bautista"],
       "Plot":"The Guardians struggle to keep together as a team while dealing with their personal family issues, notably Star-Lord's encounter with his father, the ambitious celestial being Ego.",
       "Poster":"https://m.media-amazon.com/images/M/MV5BNWE5MGI3MDctMmU5Ni00YzI2LWEzMTQtZGIyZDA5MzQzNDBhXkEyXkFqcGc@._V1_SX300.jpg",
-      "Metascore":"67",
-      "imdbRating":"7.6",
-    },
-    {
-      "Title": "Inception",
-      "Released": "2010-07-16",
-      "Runtime": 148,
-      "Genres": ["Action", "Adventure", "Sci-Fi"],
-      "Directors": ["Christopher Nolan"],
-      "Writers": ["Christopher Nolan"],
-      "Actors": ["Leonardo DiCaprio", "Joseph Gordon-Levitt", "Elliot Page"],
-      "Plot": "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.",
-      "Poster": "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg",
-      "Metascore": 74,
-      "imdbRating": 8.8
+      "Metascore":67,
+      "imdbRating":7.6
     }
   ]
   res.json(movies)
@@ -54,4 +53,3 @@ app.get('/movies', function (req, res) {
 app.listen(3000)
 
 console.log("Server now listening on http://localhost:3000/")
-
