@@ -7,29 +7,38 @@
     <title>Movies!</title>
     <style>
         /*
+         * STYLING (Part 3)
+         *
          * CSS rules are written as "selector { property: value; }" pairs.
          * The selector targets which HTML elements the rules apply to.
-         * We use element names (body, h1, img, p, span), class names (.genre),
-         * or our own custom classes (.movie-info, .rating, .meta-label).
+         * I use element names (body, h2, img, p), class names (.genre),
+         * or custom classes (.movie-info, .rating, .meta-label).
          */
 
         /* Styles for the entire page body */
         body {
-            /* 'Jetbrains Mono' is the preferred font; 'sans-serif' is the fallback
-               if the user's device doesn't have it installed */
-
-            font-family: 'JetBrains Mono', sans-serif;
-            background-color: #1e1e1e; /* dark grey  */
-            color: #e0e0e0;            /* white/gray text  */
+            /*
+             * JetBrains Mono is a monospace font designed for code editors.
+             * 'monospace' is the correct fallback category — if the font fails
+             * to load, the browser picks any monospace font it has available.
+             */
+            font-family: 'JetBrains Mono', monospace;
+            background-color: #1e1e1e; /* dark grey — easy on the eyes, neutral tone */
+            color: #e0e0e0;            /* light grey text so it's readable on dark bg */
             margin: 0;                 /* remove the browser's default outer spacing */
             padding: 20px;            /* add inner spacing so content doesn't touch the edge */
         }
 
         /* Movie title heading */
-        h1 {
+        h2 {
+            /*
+             * I use <h2> (not <h1>) for movie titles because a page should
+             * only have one <h1> — the main page heading. Each movie card is
+             * a sub-section, so <h2> is the semantically correct level.
+             */
             font-weight: bold;
             margin: 0 0 8px 0; /* only bottom margin — top/left/right are 0 */
-            color: #f5f5f5;    /* near-white to stand out against the dark grey card */
+            color: #f5f5f5;    /* near-white to stand out against the dark card */
             font-size: 1.6em;  /* 1em = the current font size; 1.6em is 60% larger */
         }
 
@@ -37,16 +46,18 @@
         img {
             border-radius: 8px;  /* rounded corners soften the look */
             max-width: 300px;    /* prevent the poster from growing too large */
+            width: 300px;        /* consistent width so all posters take the same space */
+            height: auto;        /* height scales proportionally — no stretching */
         }
 
         /*
          * Each movie is wrapped in an <article> element.
-         * We chose <article> because it is a semantic HTML element that
+         * I chose <article> because it is a semantic HTML element that
          * represents a self-contained, independently meaningful piece of content —
          * exactly what a single movie card is.
          */
         article {
-            background-color: #141414; /* slightly lighter than the body background */
+            background-color: #141414; /* very dark card background */
             border-radius: 12px;       /* rounded card corners */
             margin: 20px auto;         /* vertical spacing between cards; auto centers horizontally */
             padding: 20px;             /* inner breathing room */
@@ -63,27 +74,23 @@
 
         /* General paragraph spacing */
         p {
-            margin: 6px 0;   /* small top/bottom gap between each info line */
-            line-height: 1.5; /* 1.5× the font size between lines — easier to read */
-        }
-
-        /* Small right margin after every <span> so items don't run together */
-        span {
-            margin-right: 4px;
+            margin: 6px 0;    /* small top/bottom gap between each info line */
+            line-height: 1.5; /* 1.5x the font size between lines — easier to read */
         }
 
         /*
-         * Genre tags — we give each genre its own <span> with class "genre"
-         * so we can style them independently from other <span> elements.
+         * Genre tags — I give each genre its own <span> with class "genre"
+         * so I can style them independently from other <span> elements.
          * Using a class selector (.genre) is more precise than styling all spans.
          */
         .genre {
-            background-color: #141414;  /* background */
+            background-color: #141414;  /* same dark tone as the card — pill defined by its border */
             padding: 3px 10px;          /* top/bottom 3px, left/right 10px */
             border-radius: 20px;        /* large radius turns the rectangle into a pill shape */
             display: inline-block;      /* allows padding to work correctly on a span */
             font-size: 0.85em;          /* slightly smaller than surrounding text */
-            border: 1px solid #888888;  /* light grey outline to separate pill from background */
+            border: 1px solid #888888;  /* grey outline gives the pill its shape */
+            margin-right: 4px;          /* gap between individual genre pills */
             margin-bottom: 4px;         /* gap if genres wrap to a second line */
         }
 
@@ -125,54 +132,65 @@
                 width: 100%;
             }
 
-            h1 {
+            h2 {
                 font-size: 1.3em;       /* slightly smaller title so it fits on one line */
             }
         }
     </style>
     <script>
+
+
         /*
-         * window.onload fires once the browser has fully loaded the page.
-         * We wait for this moment because we need the <body> element to exist
-         * in the DOM before we can append movie cards to it.
+         * DOMContentLoaded fires as soon as the HTML is parsed and the DOM is ready.
+         * I use this instead of window.onload because window.onload waits for ALL
+         * assets (images, stylesheets) to finish loading first — which is slower
+         * than needed. I only need the DOM to exist, not every image to be loaded.
          */
-        window.onload = function () {
+        window.addEventListener("DOMContentLoaded", function () {
             /*
              * XMLHttpRequest (XHR) is the classic browser API for making
              * HTTP requests without navigating away from the page (AJAX).
-             * We create one request object and configure it step by step.
+             * I create one request object and configure it step by step.
              */
             const xhr = new XMLHttpRequest()
 
             /*
-             * xhr.onload is a callback — a function we hand to the browser
+             * xhr.onload is a callback — a function I hand to the browser
              * and say "call this when the response has fully arrived".
-             * We define what to do with the data here, but the browser
+             * I define what to do with the data here, but the browser
              * calls this function later, only after the server responds.
              */
             xhr.onload = function () {
-                /* querySelector finds the first element matching a CSS selector */
-                const bodyElement = document.querySelector("body")
+                /*
+                 * I target the <main> container instead of appending directly
+                 * to <body>. This is cleaner structurally: <body> is the root of
+                 * the page, while <main> marks the primary content area. It also
+                 * leaves room for a header or footer outside <main> in the future.
+                 */
+                const container = document.querySelector("#movies-container")
 
-                if (xhr.status == 200) {
+                if (xhr.status === 200) {
                     /*
                      * HTTP status 200 means "OK" — the server responded successfully.
+                     * I use === (strict equality) instead of == (loose equality) because
+                     * === also checks the type — xhr.status is always a number, so
+                     * === 200 is the precise, correct comparison.
                      *
                      * xhr.responseText contains the raw text the server sent back.
                      * JSON.parse() converts that JSON text into real JavaScript
-                     * objects/arrays we can work with using dot notation (movie.Title).
+                     * objects/arrays I can work with using dot notation (movie.Title).
                      */
                     const movies = JSON.parse(xhr.responseText)
 
                     /*
                      * forEach loops over every item in the movies array.
                      * For each iteration, 'movie' is the current movie object.
-                     * We build a card for it and add it to the page.
+                     * I build a card for it and add it to the page.
                      */
                     movies.forEach(function (movie) {
 
                         /*
-                         * We use <article> for each movie card because it is the
+                         * I use <article> for each movie card because it is the
                          * semantically correct element for a self-contained piece
                          * of content. Using <div> would work visually but carries
                          * no meaning — <article> tells browsers, screen readers,
@@ -182,9 +200,19 @@
 
                         /* --- Poster image --- */
                         const img = document.createElement("img")
-                        img.src = movie.Poster       /* URL of the poster from the server data */
+                        img.src = movie.Poster            /* URL of the poster from the server data */
                         img.alt = movie.Title + " poster" /* alt text for accessibility / if image fails to load */
-                        article.appendChild(img)     /* attach the image inside the article */
+
+                        /*
+                         * onerror fires if the image URL is broken or the network request fails.
+                         * Instead of showing a broken image icon, we hide the element entirely.
+                         * This keeps the card looking clean even when a poster is unavailable.
+                         */
+                        img.onerror = function () {
+                            img.style.display = "none"
+                        }
+
+                        article.appendChild(img) /* attach the image inside the article */
 
                         /*
                          * A plain <div> groups all the text fields together so flexbox
@@ -197,44 +225,55 @@
 
                         /* --- Title --- */
                         /*
-                         * <h1> is the top-level heading element — the most important
-                         * heading on a section of content. We use it for the movie title
-                         * because it is the primary label of each card.
-                         * textContent is safer than innerHTML here because the title is
-                         * plain text and we don't want the browser to interpret it as HTML.
+                         * <h2> is used here (not <h1>) because a page should only have
+                         * one <h1> — the top-level page heading. Each movie is a card
+                         * within the page, so <h2> is the correct heading level.
+                         * textContent is used (not innerHTML) because the title is plain
+                         * text and I never want the browser to interpret it as HTML.
                          */
-                        const title = document.createElement("h1")
+                        const title = document.createElement("h2")
                         title.textContent = movie.Title
                         info.appendChild(title)
 
                         /* --- Released date --- */
                         /*
-                         * <p> (paragraph) is used for each line of movie info.
-                         * We use innerHTML (instead of textContent) so we can embed
-                         * a <span class="meta-label"> inside the paragraph to style
-                         * the label and value differently with CSS.
-                         * The data is safe to insert here because it comes from our
-                         * own server, not from user input.
+                         * Each info line is a <p> (paragraph) containing a label <span>
+                         * and a text node for the value. I create the label as a separate
+                         * element and use textContent for both parts so no raw HTML string
+                         * is ever handed to the browser — safer and more explicit.
+                         * append() (without "Child") adds a plain text node, not HTML.
                          */
                         const released = document.createElement("p")
-                        released.innerHTML = '<span class="meta-label">Released:</span> ' + movie.Released
+                        const releasedLabel = document.createElement("span")
+                        releasedLabel.className = "meta-label"
+                        releasedLabel.textContent = "Released:"
+                        released.appendChild(releasedLabel)
+                        released.append(" " + movie.Released)
                         info.appendChild(released)
 
                         /* --- Runtime --- */
                         const runtime = document.createElement("p")
+                        const runtimeLabel = document.createElement("span")
+                        runtimeLabel.className = "meta-label"
+                        runtimeLabel.textContent = "Runtime:"
+                        runtime.appendChild(runtimeLabel)
                         /* movie.Runtime is a number (e.g. 109), so we add ' min' as the unit */
-                        runtime.innerHTML = '<span class="meta-label">Runtime:</span> ' + movie.Runtime + ' min'
+                        runtime.append(" " + movie.Runtime + " min")
                         info.appendChild(runtime)
 
                         /* --- Genres --- */
                         /*
                          * Genres is an array (e.g. ["Horror", "Mystery", "Sci-Fi"]).
-                         * Instead of joining them into a comma-separated string, we give
+                         * Instead of joining them into a comma-separated string, I give
                          * each genre its own <span class="genre"> so CSS can style them
                          * as individual pill-shaped tags.
                          */
                         const genresP = document.createElement("p")
-                        genresP.innerHTML = '<span class="meta-label">Genres:</span> '
+                        const genresLabel = document.createElement("span")
+                        genresLabel.className = "meta-label"
+                        genresLabel.textContent = "Genres:"
+                        genresP.appendChild(genresLabel)
+                        genresP.append(" ")
                         movie.Genres.forEach(function (genre) {
                             const span = document.createElement("span")
                             span.className = "genre" /* links to the .genre CSS pill style */
@@ -245,51 +284,95 @@
 
                         /* --- Directors, Writers, Actors --- */
                         /*
-                         * These are also arrays, but we display them as a simple
+                         * These are also arrays, but I display them as a simple
                          * comma-separated list rather than pills — they don't need
                          * individual styling, so join(", ") is the simplest approach.
                          */
                         const directors = document.createElement("p")
-                        directors.innerHTML = '<span class="meta-label">Directors:</span> ' + movie.Directors.join(", ")
+                        const directorsLabel = document.createElement("span")
+                        directorsLabel.className = "meta-label"
+                        directorsLabel.textContent = "Directors:"
+                        directors.appendChild(directorsLabel)
+                        directors.append(" " + movie.Directors.join(", "))
                         info.appendChild(directors)
 
                         const writers = document.createElement("p")
-                        writers.innerHTML = '<span class="meta-label">Writers:</span> ' + movie.Writers.join(", ")
+                        const writersLabel = document.createElement("span")
+                        writersLabel.className = "meta-label"
+                        writersLabel.textContent = "Writers:"
+                        writers.appendChild(writersLabel)
+                        writers.append(" " + movie.Writers.join(", "))
                         info.appendChild(writers)
 
                         const actors = document.createElement("p")
-                        actors.innerHTML = '<span class="meta-label">Actors:</span> ' + movie.Actors.join(", ")
+                        const actorsLabel = document.createElement("span")
+                        actorsLabel.className = "meta-label"
+                        actorsLabel.textContent = "Actors:"
+                        actors.appendChild(actorsLabel)
+                        actors.append(" " + movie.Actors.join(", "))
                         info.appendChild(actors)
 
                         /* --- Plot --- */
                         const plot = document.createElement("p")
-                        plot.innerHTML = '<span class="meta-label">Plot:</span> ' + movie.Plot
+                        const plotLabel = document.createElement("span")
+                        plotLabel.className = "meta-label"
+                        plotLabel.textContent = "Plot:"
+                        plot.appendChild(plotLabel)
+                        plot.append(" " + movie.Plot)
                         info.appendChild(plot)
 
                         /* --- Ratings --- */
                         /*
                          * Both ratings go into a single <p> so they sit on the same line.
-                         * &nbsp; is an HTML non-breaking space — it adds a visible gap
-                         * between the two ratings without them collapsing together.
-                         * The <span class="rating"> makes the numbers green via CSS.
+                         * Each label and value is its own element — no raw HTML strings.
                          */
-                        const ratings = document.createElement("p")
-                        ratings.innerHTML = '<span class="meta-label">IMDb:</span> <span class="rating">' + movie.imdbRating + '</span>' +
-                            ' &nbsp; <span class="meta-label">Metascore:</span> <span class="rating">' + movie.Metascore + '</span>'
-                        info.appendChild(ratings)
+                        const ratingsP = document.createElement("p")
+
+                        const imdbLabel = document.createElement("span")
+                        imdbLabel.className = "meta-label"
+                        imdbLabel.textContent = "IMDb:"
+                        const imdbValue = document.createElement("span")
+                        imdbValue.className = "rating"
+                        imdbValue.textContent = movie.imdbRating
+
+                        const metaLabel = document.createElement("span")
+                        metaLabel.className = "meta-label"
+                        metaLabel.textContent = "Metascore:"
+                        const metaValue = document.createElement("span")
+                        metaValue.className = "rating"
+                        metaValue.textContent = movie.Metascore
+
+                        ratingsP.appendChild(imdbLabel)
+                        ratingsP.append(" ")
+                        ratingsP.appendChild(imdbValue)
+                        ratingsP.append("   ") /* extra space between the two ratings */
+                        ratingsP.appendChild(metaLabel)
+                        ratingsP.append(" ")
+                        ratingsP.appendChild(metaValue)
+                        info.appendChild(ratingsP)
 
                         /*
                          * Now that all elements are built, attach the info div to the article,
-                         * then attach the finished article card to the page body.
+                         * then attach the finished article card to the container.
                          * appendChild always adds the new element as the last child.
                          */
                         article.appendChild(info)
-                        bodyElement.appendChild(article)
+                        container.appendChild(article)
                     })
                 } else {
                     /* Any status other than 200 means something went wrong on the server */
-                    bodyElement.append("Daten konnten nicht geladen werden, Status " + xhr.status + " - " + xhr.statusText)
+                    container.append("Daten konnten nicht geladen werden, Status " + xhr.status + " - " + xhr.statusText)
                 }
+            }
+
+            /*
+             * xhr.onerror fires when the request cannot be completed at all —
+             * for example if the server is offline or there is no network connection.
+             * This is different from xhr.onload, which only fires when a response
+             * (even an error response like 404 or 500) actually arrives.
+             */
+            xhr.onerror = function () {
+                document.querySelector("#movies-container").append("Network error: request failed.")
             }
 
             /*
@@ -301,13 +384,19 @@
              */
             xhr.open("GET", "/movies")
             xhr.send()
-        }
+        })
     </script>
 
 </head>
 
 <body>
-<!-- Movie cards are inserted here dynamically by JavaScript after the page loads -->
+<!--
+    <main> marks the primary content area of the page.
+    Movie cards are appended here by JavaScript.
+    Using <main> instead of appending directly to <body> gives the page
+    better structure and leaves room for a header or footer outside this area.
+-->
+<main id="movies-container"></main>
 </body>
 
 </html>
